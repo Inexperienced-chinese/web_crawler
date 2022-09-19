@@ -20,6 +20,9 @@ class Crawler:
         url_stack = [domain]
         while len(url_stack) != 0:
             curr_url = url_stack.pop(url_stack[-1])
+            curr_html_path = Downloader.update(curr_url)
+            if curr_html_path is None:
+                continue
             for url in HtmlParser.get_urls_from_html(curr_html_path):
                 url = UrlUtils.crop_url_params(url)
                 # TODO: Реализовать проверку на соответствие robot.txt
