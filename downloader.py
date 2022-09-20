@@ -24,6 +24,14 @@ def build_path_to_page(domain, num):
     return os.path.join(CommonSetup.BASE_FOLDER, domain, "pages", f"{num}.html")
 
 
+def get_domain_with_lvl(url: str, lvl=2):
+    full_domain = urlparse(url).netloc
+    splited_domain = full_domain.split('.')
+    lvl_domain = '.'.join(splited_domain[-lvl:])
+
+    return lvl_domain
+
+
 class HeadRequest(urllib.request.Request):
     def get_method(self):
         return "HEAD"
@@ -48,14 +56,17 @@ class Downloader:
 
     @staticmethod
     def get_last_update_time(url):
-        headers_response = urlopen(HeadRequest(url))
-        last_modified = dict(headers_response.info()).get('last-modified')
-
-        converted = None
+        last_modified = None
+        try:
+            headers_response = urlopen(HeadRequest(url))
+            last_modified = dict(headers_response.info()).get('last-modified')
+        except:
+            warnings.warn(f"Can't download page: {url}")
 
         if last_modified is None:
             return None
 
+        converted = None
         try:
             converted = datetime.strptime(last_modified, CommonSetup.DATE_TIME_PATTERN)
         except ValueError:
@@ -67,7 +78,7 @@ class Downloader:
         if url not in Downloader.URL_INDEX:
             Downloader.URL_INDEX[url] = len(Downloader.URL_INDEX) + 1
 
-        domain = urlparse(url).netloc
+        domain = get_domain_with_lvl(url)
         try:
             html = urlopen(url).read().decode('cp1251')
             path = Path(build_path_to_page(domain, Downloader.URL_INDEX[url]))
@@ -82,7 +93,7 @@ class Downloader:
 
     @staticmethod
     def update(url):
-        domain = urlparse(url).netloc
+        domain = get_domain_with_lvl(url)
         Downloader.url_index_load(domain)
 
         last_update = Downloader.get_last_update_time(url)
