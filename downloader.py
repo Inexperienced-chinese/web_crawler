@@ -10,6 +10,7 @@ from urllib.request import urlopen
 
 from setup import CommonSetup
 from pathlib import Path
+from url_utils import UrlUtils
 
 
 def build_path_to_page(domain, num):
@@ -22,14 +23,6 @@ def build_path_to_page(domain, num):
         os.mkdir(curr_path)
 
     return os.path.join(CommonSetup.BASE_FOLDER, domain, "pages", f"{num}.html")
-
-
-def get_domain_with_lvl(url: str, lvl=2):
-    full_domain = urlparse(url).netloc
-    splited_domain = full_domain.split('.')
-    lvl_domain = '.'.join(splited_domain[-lvl:])
-
-    return lvl_domain
 
 
 class HeadRequest(urllib.request.Request):
@@ -78,7 +71,7 @@ class Downloader:
         if url not in Downloader.URL_INDEX:
             Downloader.URL_INDEX[url] = len(Downloader.URL_INDEX) + 1
 
-        domain = get_domain_with_lvl(url)
+        domain = UrlUtils.get_domain_with_lvl(url)
         try:
             html = urlopen(url).read().decode('cp1251')
             path = Path(build_path_to_page(domain, Downloader.URL_INDEX[url]))
@@ -93,7 +86,7 @@ class Downloader:
 
     @staticmethod
     def update(url):
-        domain = get_domain_with_lvl(url)
+        domain = UrlUtils.get_domain_with_lvl(url)
         Downloader.url_index_load(domain)
 
         last_update = Downloader.get_last_update_time(url)
