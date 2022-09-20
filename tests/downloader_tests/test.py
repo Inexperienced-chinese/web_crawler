@@ -2,7 +2,7 @@ import unittest
 import urllib.request
 
 
-from downloader import Downloader
+from downloader import Downloader, get_domain_with_lvl
 
 
 class Test(unittest.TestCase):
@@ -14,3 +14,6 @@ class Test(unittest.TestCase):
 
     def test_update(self):
         print(Downloader.update('https://stackoverflow.com'))
+
+    def test_get_domain(self):
+        print(get_domain_with_lvl("https://try.stackoverflow.co"))
