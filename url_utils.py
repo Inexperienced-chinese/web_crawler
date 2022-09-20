@@ -12,3 +12,8 @@ class UrlUtils:
         for url in urls:
             if UrlUtils.get_url_domain(url) in domains:
                 yield url
+
+    @staticmethod
+    def crop_url_params(url):
+        # TODO: Сделать метод для удаления параметров из url
+        return url
