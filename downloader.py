@@ -12,7 +12,7 @@ from setup import CommonSetup
 from pathlib import Path
 
 
-def build_path(domain, num):
+def build_path_to_page(domain, num):
     curr_path = os.path.join(CommonSetup.BASE_FOLDER, domain)
     if not os.path.isdir(curr_path):
         os.mkdir(curr_path)
@@ -66,16 +66,22 @@ class Downloader:
             cls.URL_INDEX[url] = len(cls.URL_INDEX) + 1
 
         domain = urlparse(url).netloc
-        html = urlopen(url).read().decode('utf-8')
-        path = Path(build_path(domain, cls.URL_INDEX[url]))
-        with open(path, 'w') as f:
-            f.write(html)
+        try:
+            html = urlopen(url).read().decode('cp1251')
+            path = Path(build_path_to_page(domain, cls.URL_INDEX[url]))
 
-        cls.url_index_dump(domain)
-        return path
+            with open(path, 'w') as f:
+                f.write(html)
+
+            cls.url_index_dump(domain)
+            return path
+        except:
+            warnings.warn("Something goes wrong while downloading")
 
     @classmethod
     def update(cls, url):
+        cls.url_index_load()
+
         last_update = cls.get_last_update_time(url)
         if url not in cls.URL_INDEX or last_update is None:
             return cls.download(url)
