@@ -32,17 +32,17 @@ class HeadRequest(urllib.request.Request):
 class Downloader:
     URL_INDEX = dict()
 
-    @classmethod
-    def url_index_load(cls):
+    @staticmethod
+    def url_index_load():
         try:
-            cls.URL_INDEX = json.load(CommonSetup.URL_INDEX_FILE)
+            Downloader.URL_INDEX = json.load(CommonSetup.URL_INDEX_FILE)
         except FileNotFoundError:
             warnings.warn("No url_index file")
 
-    @classmethod
-    def url_index_dump(cls, domain):
+    @staticmethod
+    def url_index_dump(domain):
         with open(os.path.join(CommonSetup.BASE_FOLDER, domain, CommonSetup.URL_INDEX_FILE), 'w') as f:
-            json.dump(cls.URL_INDEX, f)
+            json.dump(Downloader.URL_INDEX, f)
 
     @staticmethod
     def get_last_update_time(url):
@@ -60,32 +60,32 @@ class Downloader:
             warnings.warn("Wrong datetime format")
         return converted
 
-    @classmethod
-    def download(cls, url):
-        if url not in cls.URL_INDEX:
-            cls.URL_INDEX[url] = len(cls.URL_INDEX) + 1
+    @staticmethod
+    def download(url):
+        if url not in Downloader.URL_INDEX:
+            Downloader.URL_INDEX[url] = len(Downloader.URL_INDEX) + 1
 
         domain = urlparse(url).netloc
         try:
             html = urlopen(url).read().decode('cp1251')
-            path = Path(build_path_to_page(domain, cls.URL_INDEX[url]))
+            path = Path(build_path_to_page(domain, Downloader.URL_INDEX[url]))
 
             with open(path, 'w') as f:
                 f.write(html)
 
-            cls.url_index_dump(domain)
+            Downloader.url_index_dump(domain)
             return path
         except:
             warnings.warn("Something goes wrong while downloading")
 
-    @classmethod
-    def update(cls, url):
-        cls.url_index_load()
+    @staticmethod
+    def update(url):
+        Downloader.url_index_load()
 
-        last_update = cls.get_last_update_time(url)
-        if url not in cls.URL_INDEX or last_update is None:
-            return cls.download(url)
+        last_update = Downloader.get_last_update_time(url)
+        if url not in Downloader.URL_INDEX or last_update is None:
+            return Downloader.download(url)
 
         timedelta = datetime.now() - last_update
         if timedelta > CommonSetup.UPDATE_TIMEDELTA:
-            return cls.download(url)
+            return Downloader.download(url)
