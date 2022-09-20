@@ -1,19 +1,28 @@
+from urllib.parse import urlparse
+
 import tldextract
 
 
 class UrlUtils:
     @staticmethod
-    def get_url_domain(url):
-        ext = tldextract.extract(url)
-        return ext.domain
+    def get_domain_with_lvl(url: str, lvl=2):
+        full_domain = urlparse(url).netloc
+        splited_domain = full_domain.split('.')
+        lvl_domain = '.'.join(splited_domain[-lvl:])
+
+        return lvl_domain
 
     @staticmethod
-    def filter_urls_by_domains(urls, domains):
-        for url in urls:
-            if UrlUtils.get_url_domain(url) in domains:
-                yield url
+    def get_format_url(url, page_url):
+        if url is None or 'javascript' in url or '#' in url:
+            return None
 
-    @staticmethod
-    def crop_url_params(url):
-        # TODO: Сделать метод для удаления параметров из url
+        if '?' in url:
+            url = url[:url.find('?')]
+        if url[-1] == '/':
+            url = url[:-1]
+        if len(url) == 0:
+            return None
+        if url[0] == '/':
+            url = page_url + url
         return url

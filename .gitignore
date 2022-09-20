@@ -11,3 +11,4 @@ database/
 
 #local trash
 .idea/
+__pycache__/
