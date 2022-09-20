@@ -33,9 +33,11 @@ class Downloader:
     URL_INDEX = dict()
 
     @staticmethod
-    def url_index_load():
+    def url_index_load(domain):
         try:
-            Downloader.URL_INDEX = json.load(CommonSetup.URL_INDEX_FILE)
+            path = os.path.join(CommonSetup.BASE_FOLDER, domain, CommonSetup.URL_INDEX_FILE)
+            with open(path, 'r') as f:
+                Downloader.URL_INDEX = json.load(f)
         except FileNotFoundError:
             warnings.warn("No url_index file")
 
@@ -80,7 +82,8 @@ class Downloader:
 
     @staticmethod
     def update(url):
-        Downloader.url_index_load()
+        domain = urlparse(url).netloc
+        Downloader.url_index_load(domain)
 
         last_update = Downloader.get_last_update_time(url)
         if url not in Downloader.URL_INDEX or last_update is None:
