@@ -25,6 +25,13 @@ def build_path_to_page(domain, num):
     return os.path.join(CommonSetup.BASE_FOLDER, domain, "pages", f"{num}.html")
 
 
+def build_path_to_robot(domain):
+    curr_path = os.path.join(CommonSetup.BASE_FOLDER, domain)
+    if not os.path.isdir(curr_path):
+        os.mkdir(curr_path)
+    return os.path.join(curr_path, 'robots.txt')
+
+
 class HeadRequest(urllib.request.Request):
     def get_method(self):
         return "HEAD"
@@ -32,6 +39,15 @@ class HeadRequest(urllib.request.Request):
 
 class Downloader:
     URL_INDEX = dict()
+
+    @staticmethod
+    def download_robot(domain: str):
+        with open(build_path_to_robot(domain), 'w') as f:
+            try:
+                robots = urlopen(f"https://{domain}/robots.txt")
+                f.write(robots.read().decode('cp1251'))
+            except:
+                warnings.warn(f"Bad robots.txt on {domain}")
 
     @staticmethod
     def url_index_load(domain):
