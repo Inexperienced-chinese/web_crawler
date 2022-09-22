@@ -13,4 +13,4 @@ class HtmlParser:
                 url = UrlUtils.get_format_url(quote.get('href'), page_url)
                 if url is not None:
                     urls.add(url)
-        return sorted(list(urls))
+        return list(urls)
