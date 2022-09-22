@@ -17,7 +17,8 @@ def build_path_to_page(domain, num):
     curr_path = os.path.join(CommonSetup.BASE_FOLDER, domain)
     if not os.path.isdir(curr_path):
         os.mkdir(curr_path)
-        curr_path = os.path.join(curr_path, "pages")
+
+    curr_path = os.path.join(curr_path, "pages")
 
     if not os.path.isdir(curr_path):
         os.mkdir(curr_path)

@@ -1,7 +1,6 @@
 import unittest
 import urllib.request
 
-
 from downloader import Downloader
 from url_utils import UrlUtils
 
@@ -21,3 +20,10 @@ class Test(unittest.TestCase):
 
     def test_download_robot(self):
         Downloader.download_robot("vk.com")
+
+    def test_many_download(self):
+        Downloader.download_robot("stackoverflow.com")
+
+        Downloader.update("https://stackoverflow.com")
+        Downloader.update("https://stackoverflow.com/questions")
+        Downloader.update("https://stackoverflow.com/tags")
