@@ -1,6 +1,10 @@
+import os.path
 from urllib.parse import urlparse
 
 import tldextract
+from urllib.parse import urlparse
+
+from setup import CommonSetup
 
 
 class UrlUtils:
@@ -28,3 +32,19 @@ class UrlUtils:
         if url[0] == '/':
             url = page_url + url[1:]
         return url
+
+    @staticmethod
+    def build_path_to_page(url):
+
+        p = urlparse(url)
+        path_list = p.path.split('/')[1:]
+        curr_path = os.path.join(CommonSetup.BASE_FOLDER, p.netloc)
+        if not os.path.isdir(curr_path):
+            os.mkdir(curr_path)
+
+        for folder in path_list[:-1]:
+            curr_path = os.path.join(curr_path, folder)
+            if not os.path.isdir(curr_path):
+                os.mkdir(curr_path)
+
+        return os.path.join(curr_path, f"{path_list[-1]}.html")
