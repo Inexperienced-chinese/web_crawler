@@ -11,8 +11,9 @@ class Crawler:
     @staticmethod
     def update():
         for domain in CommonSetup.ALLOWED_DOMAINS:
-            t = threading.Thread(target=Crawler.parse_domain, args=domain)
-            Crawler.parse_domain(domain)
+            t = threading.Thread(target=Crawler.parse_domain, args=(domain,))
+            t.start()
+            #Crawler.parse_domain(domain)
 
     @staticmethod
     def parse_domain(domain):
@@ -25,6 +26,7 @@ class Crawler:
         while len(url_stack) != 0:
             curr_url = url_stack.pop()
             passed_urls.add(curr_url)
+            print(curr_url)
             curr_html_path = Downloader.update(curr_url)
             if curr_html_path is None:
                 continue
