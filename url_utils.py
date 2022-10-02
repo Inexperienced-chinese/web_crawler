@@ -1,10 +1,28 @@
 import os.path
+import urllib.request
 from urllib.parse import urlparse
 
 import tldextract
 from urllib.parse import urlparse
+from urllib.request import urlopen
 
 from setup import CommonSetup
+import re
+
+
+def build_path_by_url(url):
+    p = urlparse(url)
+    path_list = p.path.split('/')[1:]
+    curr_path = os.path.join(CommonSetup.BASE_FOLDER, p.netloc)
+    if not os.path.isdir(curr_path):
+        os.mkdir(curr_path)
+
+    for folder in path_list[:-1]:
+        curr_path = os.path.join(curr_path, folder)
+        if not os.path.isdir(curr_path):
+            os.mkdir(curr_path)
+
+    return curr_path, path_list[-1]
 
 
 class UrlUtils:
@@ -35,16 +53,22 @@ class UrlUtils:
 
     @staticmethod
     def build_path_to_page(url):
+        path, name = build_path_by_url(url)
+        return os.path.join(path, f"{name}.html")
 
-        p = urlparse(url)
-        path_list = p.path.split('/')[1:]
-        curr_path = os.path.join(CommonSetup.BASE_FOLDER, p.netloc)
-        if not os.path.isdir(curr_path):
-            os.mkdir(curr_path)
+    @staticmethod
+    def get_image_size(url):
+        headers_response = urlopen(HeadRequest(url))
+        content_length = int(dict(headers_response.info()).get('Content-Length'))
+        return content_length
 
-        for folder in path_list[:-1]:
-            curr_path = os.path.join(curr_path, folder)
-            if not os.path.isdir(curr_path):
-                os.mkdir(curr_path)
+    @staticmethod
+    def build_path_to_image(image_url):
+        filename = re.search(r'/([\w_-]+[.](jpg|gif|png))$', image_url)
+        path, name = build_path_by_url(image_url)
+        return os.path.join(path, filename.group(1))
 
-        return os.path.join(curr_path, f"{path_list[-1]}.html")
+
+class HeadRequest(urllib.request.Request):
+    def get_method(self):
+        return "HEAD"
