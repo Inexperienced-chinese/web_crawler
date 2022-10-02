@@ -68,6 +68,11 @@ class UrlUtils:
         path, name = build_path_by_url(image_url)
         return os.path.join(path, filename.group(1))
 
+    @staticmethod
+    def build_path_to_meta(url):
+        path, name = build_path_by_url(url)
+        return os.path.join(path, CommonSetup.META_FILE)
+
 
 class HeadRequest(urllib.request.Request):
     def get_method(self):
