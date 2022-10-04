@@ -13,7 +13,7 @@ class Crawler:
         for domain in CommonSetup.ALLOWED_DOMAINS:
             t = threading.Thread(target=Crawler.parse_domain, args=(domain,))
             t.start()
-            #Crawler.parse_domain(domain)
+            # Crawler.parse_domain(domain)
 
     @staticmethod
     def parse_domain(domain):
