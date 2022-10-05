@@ -1,22 +1,32 @@
+import os
+
+from constants import Constans
 from html_parser import HtmlParser
-from setup import CommonSetup
 from downloader import Downloader, build_path_to_robot
 from url_utils import UrlUtils
 import urllib.robotparser
 import threading
+import json
 
 
 class Crawler:
 
     @staticmethod
-    def update():
-        for domain in CommonSetup.ALLOWED_DOMAINS:
-            t = threading.Thread(target=Crawler.parse_domain, args=(domain,))
+    def update(domains):
+        for domain in domains:
+            t = threading.Thread(target=Crawler.download_domain, args=(domain,))
             t.start()
-            # Crawler.parse_domain(domain)
 
     @staticmethod
-    def parse_domain(domain):
+    def update_domain(domain):
+        domain_path_json = UrlUtils.build_path_to_url_index(domain)
+        open(domain_path_json, 'a').close()
+        with open(domain_path_json, 'r', encoding='utf8') as f:
+            domain_urls = json.load(f)
+        return domain_urls
+
+    @staticmethod
+    def download_domain(domain):
         passed_urls = set()
         url_stack = [f"https://{domain}"]
         rp = urllib.robotparser.RobotFileParser()
@@ -35,5 +45,6 @@ class Crawler:
             for url in a:
                 if rp.can_fetch('*', url) and \
                         url not in passed_urls and \
-                        UrlUtils.get_domain_with_lvl(f"https://{domain}") == UrlUtils.get_domain_with_lvl(url):
+                        UrlUtils.get_domain_with_lvl(f"https://{domain}", lvl=2) == UrlUtils.get_domain_with_lvl(url, lvl=2):
+
                     url_stack.append(url)
