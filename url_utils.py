@@ -6,14 +6,14 @@ import tldextract
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
-from setup import CommonSetup
+from constants import Constans
 import re
 
 
 def build_path_by_url(url):
     p = urlparse(url)
     path_list = p.path.split('/')[1:]
-    curr_path = os.path.join(CommonSetup.BASE_FOLDER, p.netloc)
+    curr_path = os.path.join(Constans.BASE_FOLDER, p.netloc)
     if not os.path.isdir(curr_path):
         os.mkdir(curr_path)
 
@@ -71,7 +71,7 @@ class UrlUtils:
     @staticmethod
     def build_path_to_meta(url):
         path, name = build_path_by_url(url)
-        return os.path.join(path, CommonSetup.META_FILE)
+        return os.path.join(path, Constans.META_FILE)
 
 
 class HeadRequest(urllib.request.Request):

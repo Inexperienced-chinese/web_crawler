@@ -1,7 +1,7 @@
 import datetime
 
 
-class CommonSetup:
+class Constans:
     BASE_FOLDER = 'database/'
     META_FILE = 'meta.json'
     SITE_DATE_TIME_PATTERN = '%a, %d %b %Y %H:%M:%S %Z'

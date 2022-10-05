@@ -4,13 +4,13 @@ import time
 import warnings
 from datetime import datetime
 from urllib.request import urlopen
-from setup import CommonSetup
+from constants import Constans
 from url_utils import UrlUtils, HeadRequest
 import json
 
 
 def build_path_to_robot(domain):
-    curr_path = os.path.join(CommonSetup.BASE_FOLDER, domain)
+    curr_path = os.path.join(Constans.BASE_FOLDER, domain)
     if not os.path.isdir(curr_path):
         os.mkdir(curr_path)
     return os.path.join(curr_path, 'robots.txt')
@@ -40,7 +40,7 @@ class Downloader:
 
         converted = None
         try:
-            converted = datetime.strptime(last_modified, CommonSetup.SITE_DATE_TIME_PATTERN)
+            converted = datetime.strptime(last_modified, Constans.SITE_DATE_TIME_PATTERN)
         except ValueError:
             warnings.warn("Wrong datetime format")
         return converted
@@ -64,7 +64,7 @@ class Downloader:
         last_update = meta.meta_dict["last_update"]
         if last_update is None \
                 or last_modified is None \
-                or last_modified - last_update > CommonSetup.UPDATE_TIMEDELTA:
+                or last_modified - last_update > Constans.UPDATE_TIMEDELTA:
             time.sleep(0.5)
             res = Downloader.download(url)
 
@@ -76,7 +76,7 @@ class Downloader:
 
 class Meta:
     meta_dict = None
-    deserializers = {"last_update": lambda x: datetime.strptime(x, CommonSetup.LOCAL_DATE_TIME_PATTERN)}
+    deserializers = {"last_update": lambda x: datetime.strptime(x, Constans.LOCAL_DATE_TIME_PATTERN)}
 
     def __init__(self, url):
         self.path = UrlUtils.build_path_to_meta(url)

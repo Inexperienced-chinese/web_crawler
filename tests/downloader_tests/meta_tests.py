@@ -6,7 +6,7 @@ import time
 
 from downloader import Downloader, Meta
 from url_utils import UrlUtils, HeadRequest
-from setup import CommonSetup
+from constants import Constans
 from urllib.request import urlopen
 
 
