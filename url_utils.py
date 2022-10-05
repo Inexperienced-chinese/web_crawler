@@ -1,19 +1,17 @@
 import os.path
 import urllib.request
 from urllib.parse import urlparse
-
-import tldextract
 from urllib.parse import urlparse
 from urllib.request import urlopen
 
-from setup import CommonSetup
+from constants import Constans
 import re
 
 
 def build_path_by_url(url):
     p = urlparse(url)
     path_list = p.path.split('/')[1:]
-    curr_path = os.path.join(CommonSetup.BASE_FOLDER, p.netloc)
+    curr_path = os.path.join(Constans.BASE_FOLDER, p.netloc)
     if not os.path.isdir(curr_path):
         os.mkdir(curr_path)
 
@@ -27,7 +25,7 @@ def build_path_by_url(url):
 
 class UrlUtils:
     @staticmethod
-    def get_domain_with_lvl(url: str, lvl=2):
+    def get_domain_with_lvl(url: str, lvl=0):
         full_domain = urlparse(url).netloc
         splited_domain = full_domain.split('.')
         lvl_domain = '.'.join(splited_domain[-lvl:])
@@ -71,7 +69,11 @@ class UrlUtils:
     @staticmethod
     def build_path_to_meta(url):
         path, name = build_path_by_url(url)
-        return os.path.join(path, CommonSetup.META_FILE)
+        return os.path.join(path, Constans.META_FILE)
+
+    @staticmethod
+    def build_path_to_url_index(domain):
+        return os.path.join(os.path.join(Constans.BASE_FOLDER, domain), Constans.URL_INDEX_FILE)
 
 
 class HeadRequest(urllib.request.Request):
