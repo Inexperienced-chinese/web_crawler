@@ -109,6 +109,7 @@ class Meta:
     def create_meta(self):
         self.meta_dict = dict()
         self.meta_dict["last_update"] = None
+        self.meta_dict["adjacent_urls"] = []
 
     def update(self, **kwargs):
         for k, v in kwargs:
