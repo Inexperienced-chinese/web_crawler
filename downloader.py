@@ -76,7 +76,8 @@ class Downloader:
 
 class Meta:
     meta_dict = None
-    deserializers = {"last_update": lambda x: datetime.strptime(x, CommonSetup.LOCAL_DATE_TIME_PATTERN)}
+    deserializers = {"last_update": lambda x: datetime.strptime(x, CommonSetup.LOCAL_DATE_TIME_PATTERN),
+                     "adjacent_urls": lambda urls_list: urls_list}
 
     def __init__(self, url):
         self.path = UrlUtils.build_path_to_meta(url)
@@ -109,6 +110,7 @@ class Meta:
     def create_meta(self):
         self.meta_dict = dict()
         self.meta_dict["last_update"] = None
+        self.meta_dict["adjacent_urls"] = []
 
     def update(self, **kwargs):
         for k, v in kwargs:
