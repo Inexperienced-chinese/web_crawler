@@ -2,7 +2,7 @@ import os
 
 from constants import Constans
 from html_parser import HtmlParser
-from downloader import Downloader, build_path_to_robot
+from downloader import Downloader, build_path_to_robot, Meta
 from url_utils import UrlUtils
 import urllib.robotparser
 import threading
@@ -19,11 +19,9 @@ class Crawler:
 
     @staticmethod
     def update_domain(domain):
-        domain_path_json = UrlUtils.build_path_to_url_index(domain)
-        open(domain_path_json, 'a').close()
-        with open(domain_path_json, 'r', encoding='utf8') as f:
-            domain_urls = json.load(f)
-        return domain_urls
+        meta = Meta(f"https://{domain}")
+        for url in meta.meta_dict["adjacent_urls"]:
+            Downloader.update(url)
 
     @staticmethod
     def download_domain(domain):
