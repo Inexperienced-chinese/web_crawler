@@ -63,6 +63,8 @@ class UrlUtils:
     @staticmethod
     def build_path_to_image(image_url):
         filename = re.search(r'/([\w_-]+[.](jpg|gif|png))$', image_url)
+        if filename is None:
+            return None
         path, name = build_path_by_url(image_url)
         return os.path.join(path, filename.group(1))
 

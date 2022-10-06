@@ -1,3 +1,5 @@
+import warnings
+
 from bs4 import BeautifulSoup
 from url_utils import UrlUtils, HeadRequest
 from urllib.request import urlopen
@@ -19,10 +21,19 @@ class HtmlParser:
 
     @staticmethod
     def get_images(url, max_bytes=1000000):  # size in ...
-        html = urlopen(url)
+        try:
+            html = urlopen(url)
+        except:
+            warnings.warn("bad images")
+            return
         soup = BeautifulSoup(html, 'html.parser')
         img_tags = soup.find_all('img')
-        image_urls = [img['src'] for img in img_tags]
+        image_urls = []
+        for img in img_tags:
+            try:
+                image_urls.append(img['src'])
+            except:
+                continue
 
         for image_url in image_urls:
 
@@ -32,6 +43,10 @@ class HtmlParser:
             if UrlUtils.get_image_size(image_url) > max_bytes:
                 continue
 
-            with open(UrlUtils.build_path_to_image(image_url), "wb") as image_file:
+            path = UrlUtils.build_path_to_image(image_url)
+            if path is None:
+                return
+
+            with open(path, "wb") as image_file:
                 response = urlopen(image_url)
                 image_file.write(response.read())

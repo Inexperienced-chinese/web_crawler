@@ -9,3 +9,4 @@ class Constans:
     LOCAL_DATE_TIME_PATTERN = "%Y-%m-%d %H:%M:%S.%f"
     UPDATE_TIMEDELTA = datetime.time(0, 30, 0, 0)
     ALLOWED_DOMAINS = ['python.org/', 'stackoverflow.com/']
+    THREADS_IN_QUEUE = 5
